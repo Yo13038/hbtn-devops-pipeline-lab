@@ -1,4 +1,3 @@
-# ---------------------------------------------------------------------------
 # Continuous integration for hbtn-devops-pipeline-lab.
 #
 # HEADS UP: this workflow is DELIBERATELY BROKEN. It ships with three separate
@@ -9,7 +8,7 @@
 # not rewrite the file from scratch: the exercise is the diagnosis, not the
 # typing. Each fault has its own signature, and fixing one only gets you as far
 # as the next.
-# ---------------------------------------------------------------------------
+
 name: CI
 
 on:
@@ -79,5 +78,39 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: ./reports/
+          path: "./reports/"
           retention-days: 7
+
+  build:
+    name: Build & Publish Docker Image
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
