@@ -1,0 +1,21 @@
+=== UNIT TESTS ===
+PASS tests/unit/items.unit.test.js
+PASS tests/unit/health.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        1.083 s
+Ran all test suites matching tests/unit.
+
+=== INTEGRATION TESTS ===
+PASS tests/integration/items.int.test.js
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.973 s
+Ran all test suites matching tests/integration.
+
+=== HEALTH ===
+{"status":"ok"}
